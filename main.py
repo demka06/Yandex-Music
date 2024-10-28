@@ -1,13 +1,15 @@
 import asyncio
+from re import findall
+from typing import List
 from os import mkdir
 from os import listdir
 from os.path import isdir
-from typing import List
 
 import eyed3
 from loguru import logger
-from telebot.async_telebot import AsyncTeleBot
 from telebot import apihelper
+from telebot.async_telebot import AsyncTeleBot
+from urllib.parse import urlparse
 from yandex_music import ClientAsync
 from yandex_music import exceptions
 from yandex_music.track.track import Track
@@ -26,6 +28,18 @@ BITRATES = [64, 128, 192, 320]
 
 eyed3.log.setLevel("ERROR")
 
+
+async def get_track_from_url(url: str) -> str:
+    """
+    Извлекает track_id из url типа https://music.yandex.ru/album/24985531/track/28676495
+
+    Args:
+        url (str): Ссылка на трек
+    Return:
+         str
+    """
+
+    return ":".join(findall(r'\d+', url)[::-1])
 
 async def set_tags(track: Track,
                    file: str) -> None:
@@ -282,7 +296,7 @@ class Telegram:
 
 async def main():
     a = YandexMusic()
-    await a.download_tracks(count=10)
+    #await a.download_tracks(count=10)
 
 
 asyncio.run(main())
